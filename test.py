@@ -1,7 +1,3 @@
-my-brick-breaker/
-app.py
-requirements.txt
-streamlit
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -176,5 +172,4 @@ game_html = """
 </html>
 """
 
-# Streamlit에 HTML 구성 요소 삽입
 components.html(game_html, height=360)
