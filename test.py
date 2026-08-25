@@ -1,6 +1,6 @@
 my-brick-breaker/
-├── app.py
-└── requirements.txt
+app.py
+requirements.txt
 streamlit
 import streamlit as st
 import streamlit.components.v1 as components
