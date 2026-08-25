@@ -4,16 +4,18 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="벽돌 깨기 게임", layout="centered")
 
 st.title("🧱 클래식 벽돌 깨기")
-st.write("마우스로 패들을 조작하여 공을 반사하고 모든 벽돌을 깨보세요!")
+st.write("마우스나 손가락 터치로 패들을 조작하여 모든 벽돌을 깨보세요!")
 
-# JavaScript & HTML 기반 벽돌 깨기 게임 코드
+# JavaScript & HTML 기반 벽돌 깨기 게임 코드 (터치 지원 추가)
 game_html = """
 <!DOCTYPE html>
 <html>
 <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        * { padding: 0; margin: 0; }
-        body { display: flex; justify-content: center; align-items: center; background: #0e1117; }
+        * { padding: 0; margin: 0; touch-action: none; }
+        body { display: flex; justify-content: center; align-items: center; background: #0e1117; overflow: hidden; }
         canvas { background: #161b22; border: 2px solid #30363d; border-radius: 8px; }
     </style>
 </head>
@@ -54,12 +56,24 @@ game_html = """
         }
     }
 
+    // 마우스 및 터치 이벤트 등록
     document.addEventListener("mousemove", mouseMoveHandler, false);
+    document.addEventListener("touchstart", touchHandler, false);
+    document.addEventListener("touchmove", touchHandler, false);
 
     function mouseMoveHandler(e) {
         let relativeX = e.clientX - canvas.offsetLeft;
         if (relativeX > 0 && relativeX < canvas.width) {
             paddleX = relativeX - paddleWidth / 2;
+        }
+    }
+
+    function touchHandler(e) {
+        if (e.touches.length > 0) {
+            let relativeX = e.touches[0].clientX - canvas.offsetLeft;
+            if (relativeX > 0 && relativeX < canvas.width) {
+                paddleX = relativeX - paddleWidth / 2;
+            }
         }
     }
 
