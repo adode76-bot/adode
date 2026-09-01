@@ -1,16 +1,18 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import base64
 
 st.set_page_config(page_title="10단계 벽돌 깨기 게임", layout="centered")
 
 st.title("🧱 10단계 벽돌 깨기 (아이템 모드)")
 st.caption("마우스 또는 터치로 패들을 조작하세요. 벽돌을 깨면 10% 확률로 아이템이 떨어집니다!")
 
-# 오류가 해결된 게임 코드 (모바일 리사이징 지원)
+# HTML/JS 코드 정의
 game_html = """
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         * { padding: 0; margin: 0; touch-action: none; box-sizing: border-box; }
@@ -20,7 +22,7 @@ game_html = """
             align-items: center; 
             background: #0e1117; 
             overflow: hidden; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: sans-serif;
             width: 100vw;
             height: 100vh;
         }
@@ -29,14 +31,12 @@ game_html = """
             border: 2px solid #30363d; 
             border-radius: 12px; 
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            max-width: 98vw;
-            max-height: 90vh;
         }
     </style>
 </head>
 <body>
 
-<canvas id="myCanvas" width="480" height="400"></canvas>
+<canvas id="myCanvas" width="480" height="380"></canvas>
 
 <script>
     const canvas = document.getElementById("myCanvas");
@@ -186,7 +186,7 @@ game_html = """
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 1. 벽돌 그리기
+        // 1. 벽돌
         let brickOffsetTop = 45;
         let brickOffsetLeft = 15;
         let brickPadding = 6;
@@ -209,7 +209,7 @@ game_html = """
             }
         }
 
-        // 2. 패들 그리기
+        // 2. 패들
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
         ctx.fillStyle = paddleExpandTimer > 0 ? "#2ecc71" : "#238636";
@@ -225,7 +225,7 @@ game_html = """
             ctx.closePath();
         }
 
-        // 4. 아이템 처리
+        // 4. 아이템
         for (let i = items.length - 1; i >= 0; i--) {
             let item = items[i];
             item.y += item.dy;
@@ -249,7 +249,7 @@ game_html = """
             if (item.y > canvas.height) items.splice(i, 1);
         }
 
-        // 5. 공 처리
+        // 5. 공
         for (let i = balls.length - 1; i >= 0; i--) {
             let b = balls[i];
 
@@ -346,4 +346,8 @@ game_html = """
 </html>
 """
 
-components.html(game_html, height=450)
+# Base64 인코딩을 적용해 파이썬-HTML 간 파싱 문제 완전 방지
+b64_html = base64.b64encode(game_html.encode('utf-8')).decode('utf-8')
+iframe_code = f'<iframe src="data:text/html;base64,{b64_html}" width="100%" height="410" frameborder="0" scrolling="no"></iframe>'
+
+st.components.v1.html(iframe_code, height=420)
